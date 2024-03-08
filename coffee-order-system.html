@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Coffee Order</title>
+    <style>
+        body {
+            background-color: blanchedalmond;
+        }
+
+        label {
+            font-size: 40px;
+        }
+
+        input {
+            font-size: 40px;
+            border: 3px solid rgb(236, 212, 177);
+            float: right;
+        }
+
+        button {
+            font-size: 30px;
+            padding: 10px 40px;
+        }
+
+        .center {
+            margin: auto;
+            width: 50%;
+            padding-top: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .shown {
+            display: all;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .buttonlist {
+            font-size: 40px; 
+            margin-top: 30px;
+        }
+        
+
+
+
+    </style>
+  </head>
+  <body>
+    <div style="clear: both; margin: 40px">
+        <h2 style="padding: 20px; float: left">
+            <a href="index.html">Coffee Order System</a>
+        </h2>
+        <h2 style="padding: 20px; float: right">
+            <a href="index.html">Order Status</a>
+        </h2>
+    </div>
+
+    <div style="padding-top: 140px"></div>
+
+    <div>
+        <div style="text-align: center">
+            <button id="startButton" style="text-align: center; font-size: 40px;">Get started</button>
+        </div>
+    </div>
+
+    <div id="g1" class="hidden" >
+        <div style="text-align: center">
+            <button id="typeButton1" style="padding: 20px;" class="buttonlist" onclick="next('dark roast')">Dark Roast</button>
+            <br>
+            <button id="typeButton2" style="padding: 20px;" class="buttonlist" onclick="next('espresso')">Espresso</button>
+            <br>
+            <button id="typeButton3" style="padding: 20px;" class="buttonlist" onclick="next('house blend')">House Blend</button>
+            <br>
+            <button id="typeButton4" style="padding: 20px;" class="buttonlist" onclick="next('decaf')">Decaf</button>
+        </div>
+    </div>
+
+    <div id="g2" class="hidden" >
+        <div style="text-align: center">
+            <div style="float: left; margin: auto; width: 35%; padding-left: 60px; padding-right: 30px;">
+                <button id="topButton1" class="buttonlist" onclick="add('milk'); this.disabled = true; getElementById('topRButton1').disabled = false;">Milk</button>
+                <br>
+                <button id="topButton2" class="buttonlist" onclick="add('mocha'); this.disabled = true; getElementById('topRButton2').disabled = false;">Mocha</button>
+                <br>
+                <button id="topButton3" class="buttonlist" onclick="add('soy'); this.disabled = true; getElementById('topRButton3').disabled = false;">Soy</button>
+                <br>
+                <button id="topButton4" class="buttonlist" onclick="add('whip'); this.disabled = true; getElementById('topRButton4').disabled = false;">Whip</button>
+                
+            </div>
+            <div style="float: right; margin: auto; width: 35%; padding-left: 30px; padding-right: 60px;">
+                <div style="background-color: rgb(245, 225, 205)">
+                    <h1>Your order:</h1>
+                    <br>
+                    <button disabled id="topRButton1" class="buttonlist" onclick="remove('milk'); this.disabled = true; getElementById('topButton1').disabled = false;">Milk</button>
+                    <br>
+                    <button disabled id="topRButton2" class="buttonlist" onclick="remove('mocha'); this.disabled = true; getElementById('topButton2').disabled = false;">Mocha</button>
+                    <br>
+                    <button disabled id="topRButton3" class="buttonlist" onclick="remove('soy'); this.disabled = true; getElementById('topButton3').disabled = false;">Soy</button>
+                    <br>
+                    <button disabled id="topRButton4" class="buttonlist" onclick="remove('whip'); this.disabled = true; getElementById('topButton4').disabled = false;">Whip</button>
+                    <br>
+                </div>
+                <button id="finishButton" class="buttonlist" onclick="finish()">Confirm Order</button>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div id="g3" class="hidden">
+        <div style="text-align: center">
+            <h1>Order placed:</h1>
+            <br>
+            <h1 id="receiptId"></h1>
+            <br>
+            <h1 id="receiptDescription"></h1>
+            <br>
+            <h1 id="receiptCost">If this message persists, something went wrong!</h1>
+        </div>
+    </div>
+ 
+
+
+
+
+    <script>
+      let host = "http://localhost:8080";
+      let drinkType = null;
+      let condimentsList = [];
+
+      const startButton = document.getElementById("startButton");
+      const nextButton = document.getElementById("nextButton");
+      const orderButton = document.getElementById("start__button");
+
+    startButton.addEventListener("click", function(event){
+        this.remove();
+        document.getElementById('g1').classList.toggle('hidden');
+    });
+
+    function next(coffee){
+        document.getElementById('g1').classList.toggle('hidden');
+        drinkType = coffee;
+        console.log(drinkType);
+        document.getElementById('g2').classList.toggle('hidden');
+    }
+
+    function add(condiment){
+        console.log(condiment);
+        condimentsList.push(condiment);
+    }
+
+    function remove(condiment){
+        console.log("-"+condiment);
+        for (var i = 0; i < condimentsList.length; i++){
+            if (condimentsList[i] == condiment){
+                condimentsList.splice(i, 1);
+            }
+        }
+    }
+
+    function finish(){
+        document.getElementById('g2').classList.toggle('hidden');
+        console.log(drinkType + "," + condimentsList);
+        document.getElementById('g3').classList.toggle('hidden');
+        orderCoffee();
+    }
+
+    function displayReceipt(id, cost, description){
+        idDisp = document.getElementById('receiptId');
+        costDisp = document.getElementById('receiptCost');
+        descDisp = document.getElementById('receiptDescription');
+
+        idDisp.innerHTML = "Id: " + id;
+        costDisp.innerHTML = "Total: " + cost;
+        descDisp.innerHTML = "Order: " + description;
+    }
+
+    async function orderCoffee() {
+        let message = "";
+        let data = null;
+        
+
+        let OrderData = {beverage: drinkType, condiments: condimentsList};
+        console.log("You entered:" + JSON.stringify(OrderData));
+        alert("You entered:" + JSON.stringify(OrderData));
+        let request = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            
+            body: JSON.stringify(OrderData)
+        };
+    
+        let response = await fetch(host + "/orders", request);
+
+        if(response.status == 201) {
+            console.log(response);
+            data = await response.json();
+            console.log(data);
+            displayReceipt(data.id, data.cost, data.description);
+            message = "The order was added successfully!";
+        } else {
+            console.log(response);
+            message = "Something went wrong! Order data could not be saved.";
+        }
+        alert(message);
+    }
+
+    
+
+    </script>
+  </body>
+</html>
